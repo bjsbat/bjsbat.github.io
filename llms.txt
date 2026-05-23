@@ -9,6 +9,7 @@
 - [#business](https://bjsbat.github.io/#business) — 业务领域：石化罐区自动化、电动执行机构耐火阻燃外壳、气动执行机构耐火阻燃外壳
 - [#products](https://bjsbat.github.io/#products) — 产品展示
 - [#news](https://bjsbat.github.io/#news) — 新闻报道
+- [#faq](https://bjsbat.github.io/#faq) — 常见问题
 - [#contact](https://bjsbat.github.io/#contact) — 联系我们
 
 ## 核心产品：#1709# 系列铠装防火阻燃外壳
