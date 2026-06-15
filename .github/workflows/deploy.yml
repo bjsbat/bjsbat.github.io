@@ -1,0 +1,50 @@
+name: Deploy to Alibaba Cloud ECS
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:  # 允许手动触发
+
+concurrency:
+  group: "ecs-deploy"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy static files to ECS
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.DEPLOY_KEY }}
+          known_hosts: unnecessary
+          if_key_exists: replace
+
+      - name: Add ECS host key to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy via rsync
+        run: |
+          rsync -avz --delete \
+            --exclude='.git' \
+            --exclude='.gitignore' \
+            --exclude='.github' \
+            --exclude='scripts' \
+            --exclude='.claude' \
+            --exclude='docs' \
+            --exclude='memory' \
+            --exclude='README.md' \
+            --exclude='.cursor' \
+            ./ ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/usr/share/nginx/html/
+
+      - name: Verify deployment
+        run: |
+          ssh ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} "ls -la /usr/share/nginx/html/index.html && echo 'Deployment verified'"
