@@ -57,6 +57,7 @@ server {
     add_header X-Content-Type-Options "nosniff" always;
     add_header X-Frame-Options "SAMEORIGIN" always;
     add_header X-XSS-Protection "1; mode=block" always;
+    add_header Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; script-src 'self'" always;
 
     # 静态资源
     location / {
@@ -73,16 +74,13 @@ server {
     location = /sitemap.xml  { expires -1; }
 
     # 禁止访问隐藏文件
-    location ~ /\. {
-        deny all;
-        return 404;
-    }
+    location ~ /\. { return 404; }
 }
 NGINX
 
 echo "=== [5/6] 启动 Nginx ==="
 systemctl enable nginx
-systemctl restart nginx
+systemctl reload nginx || systemctl start nginx
 systemctl status nginx --no-pager
 
 echo "=== [6/6] 验证 ==="
